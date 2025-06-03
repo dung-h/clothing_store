@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-10 items-start mt-10">
+  <!-- Ảnh sản phẩm -->
+  <div>
+    <div class="border rounded-lg overflow-hidden shadow">
+      <img
+        id="product-image"
+        src="{% if product.image and product.image.url %}{{ product.image.url }}{% else %}{% static 'products/img/no-image.png' %}{% endif %}"
+        alt="{{ product.name }}"
+        class="w-full h-auto object-cover"
+      >
+    </div>
+  </div>
+
+  <!-- Thông tin sản phẩm -->
+  <div class="space-y-6">
+    <h1 class="text-3xl font-bold font-['Cormorant_Garamond']">{{ product.name }}</h1>
+
+    <p class="text-xl text-black font-semibold font-number tracking-wide">
+      {{ product.price|intcomma }} <span class="text-sm text-gray-600 align-top">₫</span>
+    </p>
+
+    <p class="text-gray-700 font-['Outfit'] leading-relaxed">{{ product.description }}</p>
+
+    {% if product.quantity == 0 %}
+      <div class="text-red-600 font-semibold font-['Outfit']">Hết hàng</div>
+    {% else %}
+      <form method="post" action="/cart/add/{{ product.id }}/" id="add-to-cart-form" class="mt-4">
+        {% csrf_token %}
+        <button type="submit" class="px-6 py-2 bg-black text-white rounded hover:bg-gray-800 transition font-['Outfit']">
+          Thêm vào giỏ hàng
+        </button>
+      </form>
+    {% endif %}
+
+    <a href="/products/" class="inline-block mt-4 text-black underline hover:text-gray-700 font-['Outfit']">← Quay lại danh sách sản phẩm</a>
+  </div>
+</div>
+
+<!-- GỢI Ý SẢN PHẨM (placeholder, nếu có) -->
+{#
+<div class="max-w-6xl mx-auto px-4 mt-16">
+  <h2 class="text-2xl font-bold mb-4">Có thể bạn sẽ thích</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <!-- Duyệt sản phẩm tương tự -->
+  </div>
+</div>
+#}
+
+<!-- Hiệu ứng ảnh bay vào giỏ -->
+<script>
+  const form = document.getElementById('add-to-cart-form');
+  const productImage = document.getElementById('product-image');
+
+  if (form && productImage) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const cartIcon = document.querySelector('a[href="/cart/"]');
+      const imgClone = productImage.cloneNode(true);
+      const rect = productImage.getBoundingClientRect();
+
+      imgClone.style.position = 'fixed';
+      imgClone.style.top = `${rect.top}px`;
+      imgClone.style.left = `${rect.left}px`;
+      imgClone.style.width = `${rect.width}px`;
+      imgClone.style.zIndex = 1000;
+      imgClone.style.transition = 'all 0.8s ease-in-out';
+
+      document.body.appendChild(imgClone);
+
+      const cartRect = cartIcon.getBoundingClientRect();
+      setTimeout(() => {
+        imgClone.style.top = `${cartRect.top}px`;
+        imgClone.style.left = `${cartRect.left}px`;
+        imgClone.style.width = '0px';
+        imgClone.style.opacity = 0;
+      }, 10);
+
+      setTimeout(() => {
+        imgClone.remove();
+        form.submit();
+      }, 900);
+    });
+  }
+</script>
+{% endblock %}

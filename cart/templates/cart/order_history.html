@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Lịch sử đơn hàng{% endblock %}
+
+{% block content %}
+  <h1 class="text-3xl font-bold mb-6">📦 Lịch sử đơn hàng</h1>
+  {% if orders %}
+    <ul class="space-y-4">
+      {% for order in orders %}
+        <li class="border p-4 rounded">
+          <div><strong>Mã đơn:</strong> #{{ order.id }}</div>
+          <div><strong>Ngày:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</div>
+          <div><strong>Tên:</strong> {{ order.name }}</div>
+          <div><strong>Địa chỉ:</strong> {{ order.address }}</div>
+          <div><strong>SĐT:</strong> {{ order.phone }}</div>
+          <ul class="mt-2 text-sm text-gray-600">
+            {% for item in order.items.all %}
+              <li>- {{ item.quantity }} x {{ item.product.name }}</li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Bạn chưa có đơn hàng nào.</p>
+  {% endif %}
+{% endblock %}

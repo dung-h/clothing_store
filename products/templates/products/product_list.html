@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Sản phẩm{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold font-['Playfair_Display'] mb-6">Bộ sưu tập</h1>
+
+<!-- Bộ lọc sắp xếp -->
+<form method="get" class="mb-6 text-right">
+  <label for="sort" class="mr-2 font-medium">Sắp xếp:</label>
+  <select name="sort" id="sort" onchange="this.form.submit()" class="border rounded px-2 py-1">
+    <option value="newest" {% if sort_option == "newest" %}selected{% endif %}>Mới nhất</option>
+    <option value="price_asc" {% if sort_option == "price_asc" %}selected{% endif %}>Giá tăng dần</option>
+    <option value="price_desc" {% if sort_option == "price_desc" %}selected{% endif %}>Giá giảm dần</option>
+    <option value="name_asc" {% if sort_option == "name_asc" %}selected{% endif %}>Tên A-Z</option>
+  </select>
+</form>
+
+<!-- Grid sản phẩm -->
+<div class="container mx-auto px-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {% for product in products %}
+      <div class="relative bg-white rounded-lg overflow-hidden shadow hover:shadow-2xl transition duration-300">
+        <a href="{% url 'product_detail' product.id %}" class="group block">
+          <div class="relative overflow-hidden">
+            <img
+              src="{% if product.image and product.image.url %}{{ product.image.url }}{% else %}{% static 'products/img/no-image.png' %}{% endif %}"
+              alt="{{ product.name }}"
+              class="w-full h-64 object-cover transform group-hover:scale-105 transition duration-500"
+              loading="lazy"
+            >
+
+            {% if product.quantity == 0 %}
+              <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded shadow">
+                Hết hàng
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="p-4">
+            <h2 class="text-lg font-semibold mb-1 truncate">{{ product.name }}</h2>
+            <p class="text-lg text-black font-medium font-number tracking-wide">
+              {{ product.price|intcomma }} <span class="text-sm text-gray-600 align-top">₫</span>
+            </p>
+
+            <a href="{% url 'product_detail' product.id %}"
+               class="inline-block mt-3 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 text-sm">
+              Xem chi tiết
+            </a>
+          </div>
+        </a>
+      </div>
+    {% empty %}
+      <p class="text-gray-600">Không có sản phẩm nào.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- PHÂN TRANG -->
+<div class="mt-10 flex justify-center">
+  <div class="inline-flex items-center space-x-2">
+    {% if products.has_previous %}
+      <a href="?page=1" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm">&laquo; Trang đầu</a>
+      <a href="?page={{ products.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm">←</a>
+    {% endif %}
+
+    <span class="px-3 py-1 bg-black text-white rounded text-sm">
+      Trang {{ products.number }} / {{ products.paginator.num_pages }}
+    </span>
+
+    {% if products.has_next %}
+      <a href="?page={{ products.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm">→</a>
+      <a href="?page={{ products.paginator.num_pages }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm">Trang cuối &raquo;</a>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

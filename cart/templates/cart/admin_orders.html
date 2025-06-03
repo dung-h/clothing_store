@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Quản lý đơn hàng{% endblock %}
+
+{% block content %}
+  <h1 class="text-3xl font-bold mb-6">📦 Tất cả đơn hàng</h1>
+
+  {% if orders %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border rounded-lg overflow-hidden">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="text-left px-4 py-2 border-b">ID</th>
+            <th class="text-left px-4 py-2 border-b">Khách hàng</th>
+            <th class="text-left px-4 py-2 border-b">SĐT</th>
+            <th class="text-left px-4 py-2 border-b">Ngày đặt</th>
+            <th class="text-left px-4 py-2 border-b">Trạng thái</th>
+            <th class="text-left px-4 py-2 border-b">Sản phẩm</th>
+            <th class="text-left px-4 py-2 border-b">Chi tiết</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+            <tr class="hover:bg-gray-50 border-b">
+              <td class="px-4 py-2">#{{ order.id }}</td>
+              <td class="px-4 py-2">{{ order.name }}</td>
+              <td class="px-4 py-2">{{ order.phone }}</td>
+              <td class="px-4 py-2">{{ order.created_at|date:"d/m/Y H:i" }}</td>
+              <td class="px-4 py-2">{{ order.get_status_display }}</td>
+              <td class="px-4 py-2">
+                <ul class="list-disc pl-4">
+                  {% for item in order.items.all %}
+                    <li>{{ item.quantity }} x {{ item.product.name }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+              <td class="px-4 py-2">
+                <a href="{% url 'admin_order_detail' order.id %}" class="text-sm text-blue-600 underline">Xem</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-gray-600">Không có đơn hàng nào.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trang chủ{% endblock %}
+
+{% block content %}
+<!-- Hero với ảnh nền và parallax -->
+<div class="relative h-[500px] bg-fixed bg-center bg-cover flex items-center justify-center text-center px-4"
+     style="background-image: url('{% static 'products/img/hero.jpg' %}');">
+  <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+  <div class="relative z-10 text-white">
+    <h1 class="text-4xl md:text-5xl font-bold font-['Playfair_Display'] leading-snug mb-4">
+      Khám phá phong cách tối giản
+    </h1>
+    <p class="text-lg text-gray-200 mb-6 max-w-2xl mx-auto">
+      Sự kết hợp hoàn hảo giữa thiết kế hiện đại và chất liệu cao cấp.
+    </p>
+    <a href="/products/" class="inline-block px-6 py-3 bg-white text-black rounded hover:bg-gray-200 transition">
+      Xem sản phẩm
+    </a>
+  </div>
+</div>
+
+<!-- Điều hướng nhanh -->
+<div class="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto px-4">
+  <a href="/products/" class="border rounded-lg p-6 text-center hover:bg-gray-50">
+    <h2 class="text-xl font-semibold mb-2">Sản phẩm</h2>
+    <p class="text-sm text-gray-600">Khám phá tất cả sản phẩm đang có</p>
+  </a>
+  <a href="/lookbook/" class="border rounded-lg p-6 text-center hover:bg-gray-50">
+    <h2 class="text-xl font-semibold mb-2">Lookbook</h2>
+    <p class="text-sm text-gray-600">Phong cách phối đồ gợi ý</p>
+  </a>
+  <a href="/contact/" class="border rounded-lg p-6 text-center hover:bg-gray-50">
+    <h2 class="text-xl font-semibold mb-2">Liên hệ</h2>
+    <p class="text-sm text-gray-600">Đội ngũ hỗ trợ luôn sẵn sàng</p>
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Lookbook{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-8 text-center">📸 Lookbook</h1>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+  {% comment %} Dùng ảnh tạm hoặc sau này thay bằng dynamic {% endcomment %}
+  {% for i in "123456" %}
+  <div class="overflow-hidden rounded-lg shadow group relative">
+    <img
+      src="{% static 'products/img/lookbook-'|add:i|stringformat:'s'|add:'.png' %}"
+      alt="Lookbook {{ i }}"
+      class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500"
+      loading="lazy"
+    >
+    <div class="absolute inset-0 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+      <p class="text-white text-lg font-semibold">Look {{ i }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

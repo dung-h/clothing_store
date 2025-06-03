@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Giỏ hàng{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">🛒 Giỏ hàng của bạn</h1>
+
+{% if cart_items %}
+  <ul class="space-y-4">
+    {% for item in cart_items %}
+      <li class="border p-4 rounded-lg flex flex-col sm:flex-row justify-between items-center">
+        <div class="flex items-center space-x-4">
+          <img
+            src="{% if item.product.image and item.product.image.url %}{{ item.product.image.url }}{% else %}{% static 'products/img/no-image.png' %}{% endif %}"
+            alt="{{ item.product.name }}"
+            class="w-20 h-20 object-cover rounded shadow"
+          >
+          <div>
+            <h2 class="text-xl font-semibold">{{ item.product.name }}</h2>
+            <p class="text-gray-600">Giá: {{ item.product.price|intcomma }} ₫</p>
+            <label class="block mt-2">Số lượng:</label>
+            <input type="number"
+                   name="quantity_{{ item.product.id }}"
+                   value="{{ item.quantity }}"
+                   min="1"
+                   data-product-id="{{ item.product.id }}"
+                   class="border p-1 w-20 text-center rounded update-quantity">
+          </div>
+        </div>
+        <div class="mt-4 sm:mt-0">
+          <a href="/cart/remove/{{ item.product.id }}/" class="text-red-600 underline">Xóa</a>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <p class="text-right text-xl font-semibold mt-6">
+    Tổng cộng: {{ total_price|intcomma }} ₫
+  </p>
+
+  <div class="mt-6 flex justify-between items-center flex-wrap gap-4">
+    <a href="/products/" class="text-sm underline text-gray-700">← Tiếp tục mua sắm</a>
+    <form method="post" action="{% url 'checkout' %}">
+      {% csrf_token %}
+      <button type="submit" class="px-6 py-3 bg-black text-white rounded hover:bg-gray-800">
+        Tiến hành thanh toán
+      </button>
+    </form>
+  </div>
+
+{% else %}
+  <p class="text-gray-600">Giỏ hàng của bạn đang trống.</p>
+  <a href="/products/" class="inline-block mt-4 text-sm underline text-gray-700">← Mua sắm ngay</a>
+{% endif %}
+
+<script>
+document.querySelectorAll('.update-quantity').forEach(input => {
+  input.addEventListener('change', () => {
+    const productId = input.dataset.productId;
+    const quantity = input.value;
+
+    fetch('/cart/ajax/update/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `product_id=${productId}&quantity=${quantity}`
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        input.classList.add('ring-2', 'ring-green-500', 'bg-green-50');
+        setTimeout(() => {
+          input.classList.remove('ring-2', 'ring-green-500', 'bg-green-50');
+        }, 1000);
+      } else {
+        input.classList.add('ring-2', 'ring-red-500');
+        setTimeout(() => {
+          input.classList.remove('ring-2', 'ring-red-500');
+        }, 1000);
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

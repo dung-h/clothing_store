@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Cửa hàng thời trang{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        serif: ['"Cormorant Garamond"', 'serif'],
+        sans: ['"Outfit"', 'sans-serif'],
+        number: ['"Be Vietnam Pro"', 'sans-serif'], // ✅ số
+      }
+    }
+  }
+}
+
+  </script>
+
+  <style>
+    body {
+      font-family: 'Playfair Display', serif;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+
+<body class="bg-white text-gray-800 text-xl font-serif leading-relaxed">
+  <!-- Header -->
+  <header class="bg-white shadow py-4 fixed top-0 w-full z-50">
+    <div class="container mx-auto flex justify-between items-center px-6">
+      <a href="/" class="text-2xl font-bold tracking-wide">🌿 BrandName</a>
+      <nav class="flex items-center space-x-6 text-base font-sans">
+        <a href="/products/" class="hover:underline">Sản phẩm</a>
+        <a href="/lookbook/" class="hover:underline">Lookbook</a>
+        <a href="/contact/" class="hover:underline">Liên hệ</a>
+
+        <a href="/cart/" class="relative group">
+          🛒
+          {% with total=0 %}
+            {% for key, qty in request.session.cart.items %}
+              {% with total=total|add:qty %}
+              {% endwith %}
+            {% endfor %}
+            <span class="absolute -top-2 -right-3 bg-red-500 text-white text-xs rounded-full px-1">
+              {{ total }}
+            </span>
+          {% endwith %}
+        </a>
+
+        {% if user.is_authenticated %}
+          <a href="/cart/orders/" class="hover:underline">Đơn hàng</a>
+          <form method="post" action="/accounts/logout/" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="hover:underline">Đăng xuất</button>
+          </form>
+        {% else %}
+          <a href="/accounts/login/" class="hover:underline">Đăng nhập</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-grow container mx-auto px-6 py-28">
+    {% if messages %}
+      <div class="mb-6">
+        {% for message in messages %}
+          <div class="p-3 rounded bg-green-100 text-green-800">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+<footer class="bg-white shadow py-6 text-center text-sm text-gray-500">
+  &copy; 2025 Your Brand. All rights reserved.
+</footer>
+
+<!-- Messenger Live Chat -->
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js"></script>
+
+<div class="fb-customerchat"
+     attribution="setup_tool"
+     page_id="61577178802058"
+     theme_color="#000000"
+     logged_in_greeting="Xin chào! Bạn cần hỗ trợ gì?"
+     logged_out_greeting="Xin chào! Bạn cần hỗ trợ gì?">
+</div>
+
+</body>
+</html>
